@@ -50,9 +50,9 @@ dependencies = [
 dev = ["pytest"]
 
 [project.urls]
-Homepage = "https://github.com/waverlose/opensim-mcp"
-Repository = "https://github.com/waverlose/opensim-mcp"
-Issues = "https://github.com/waverlose/opensim-mcp/issues"
+Homepage = "https://github.com/waverlose/opensim-MCP"
+Repository = "https://github.com/waverlose/opensim-MCP"
+Issues = "https://github.com/waverlose/opensim-MCP/issues"
 "OpenSim" = "https://opensim.stanford.edu/"
 
 [project.scripts]
