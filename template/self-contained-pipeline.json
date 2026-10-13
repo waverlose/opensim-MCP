@@ -1,0 +1,41 @@
+{
+  "description": "A complete, self-contained inverse-dynamics pipeline. It generates its own marker data from a known pose, then runs IK, ID and static optimization, so it needs nothing but a network connection for the model. Run with: python scripts/run_spec.py template/self-contained-pipeline.json",
+  "note": "Because the markers are synthesised from a pose of the model itself, IK should recover that pose almost exactly. That makes this a good end-to-end check that the whole chain works before you point it at real capture data. The model is arm26 (2 coordinates, 6 muscles, 3 markers) - deliberately small so the run takes seconds. Note that the registry's gait models ship WITHOUT a marker set, so they cannot drive IK; supply your own marker file and a marked-up model for gait work.",
+  "ops": [
+    { "op": "get_installation_info", "args": {} },
+    { "op": "download_model", "args": { "model_name": "arm26" } },
+    { "op": "load_model", "args": { "model": "arm26" } },
+    {
+      "op": "run_python",
+      "args": {
+        "source": "import opensim as osim\nosim.Logger.setLevelString('Error')\n\n# A held pose over 0.5 s. The frame count matters: inverse dynamics needs enough\n# samples to differentiate the motion, and a handful will fail in the spline\n# fit rather than give a useful answer.\nPOSE = {'r_shoulder_elev': 0.5, 'r_elbow_flex': 1.0}\nFRAMES, DT = 51, 0.01\nout = Path('opensim_results'); out.mkdir(parents=True, exist_ok=True)\n\nmodel = osim.Model(str(resolve_model('arm26')))\nstate = model.initSystem()\ncoords = model.getCoordinateSet()\nfor name, value in POSE.items():\n    coords.get(name).setValue(state, float(value))\nmodel.realizePosition(state)\n\nmarkers = model.getMarkerSet()\nnames = [markers.get(i).getName() for i in range(markers.getSize())]\nprint('markers on this model:', names)\n\ntable = osim.TimeSeriesTableVec3()\nlabels = osim.StdVectorString()\nfor n in names:\n    labels.append(n)\ntable.setColumnLabels(labels)\nfor f in range(FRAMES):\n    row = osim.RowVectorVec3(len(names))\n    for i in range(len(names)):\n        row.__setitem__(i, markers.get(i).getLocationInGround(state))\n    table.appendRow(f * DT, row)\n\n# The TRC writer requires the header keys a real capture file carries.\nfor k, v in (('DataRate','100'), ('CameraRate','100'), ('NumFrames',str(FRAMES)),\n             ('NumMarkers', str(len(names))), ('Units','m'), ('OrigDataRate','100'),\n             ('OrigDataStartFrame','1'), ('OrigNumFrames',str(FRAMES))):\n    table.addTableMetaDataString(k, v)\nosim.TRCFileAdapter().write(table, str(out / 'posed.trc'))\nprint('wrote', out / 'posed.trc', 'with', FRAMES, 'frames')"
+      }
+    },
+    {
+      "op": "run_inverse_kinematics",
+      "args": {
+        "model": "arm26",
+        "markers_file": "opensim_results/posed.trc",
+        "results_dir": "opensim_results"
+      }
+    },
+    { "op": "read_storage", "args": { "file_path": "opensim_results/posed_ik.mot", "preview_rows": 2 } },
+    {
+      "op": "run_inverse_dynamics",
+      "args": {
+        "model": "arm26",
+        "coordinates_file": "opensim_results/posed_ik.mot",
+        "results_dir": "opensim_results/id"
+      }
+    },
+    {
+      "op": "run_static_optimization",
+      "args": {
+        "model": "arm26",
+        "coordinates_file": "opensim_results/posed_ik.mot",
+        "results_dir": "opensim_results/so"
+      }
+    },
+    { "op": "read_storage", "args": { "file_path": "opensim_results/so/static_optimization_StaticOptimization_activation.sto", "stat_columns": 200 } }
+  ]
+}

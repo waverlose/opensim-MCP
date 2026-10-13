@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+
+# Environments created by setup_env.ps1
+.venv/
+venv/
+
+# Downloaded model cache (populated on demand by download_model).
+# The registry itself is tracked; the models are not.
+src/models/*.osim
+
+# Simulation outputs and OpenSim's own log
+opensim_results/
+opensim.log
+*.sto
+*.mot
+*.trc
+!tests/**/*.sto
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,14 @@
+# Normalise line endings, so a Windows-authored file does not appear wholly
+# rewritten to a Unix contributor (and vice versa).
+* text=auto
+
+# Windows batch files must keep CRLF to run.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# PowerShell is safest with CRLF on Windows.
+*.ps1 text eol=crlf
+
+# Model geometry is binary.
+*.vtp binary
+*.stl binary

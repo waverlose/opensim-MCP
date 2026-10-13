@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "opensim-mcp"
+version = "0.1.0"
+description = "MCP server for driving OpenSim musculoskeletal simulation with AI agents"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Yuheng Liu", email = "waverlose0914@gmail.com" }]
+keywords = [
+    "mcp",
+    "model-context-protocol",
+    "opensim",
+    "biomechanics",
+    "musculoskeletal",
+    "simulation",
+    "inverse-dynamics",
+    "inverse-kinematics",
+    "moco",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+
+dependencies = [
+    "mcp>=1.0",
+    "numpy",
+    "scipy",
+    "matplotlib",
+]
+
+# `opensim` is deliberately NOT a dependency. It is a ~78 MB wheel whose build
+# must match the interpreter, so setup_env.ps1 installs it explicitly. Listing it
+# would also tempt pip into pulling a separate `casadi` alongside the one opensim
+# bundles, which breaks Moco.
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/waverlose/opensim-mcp"
+Repository = "https://github.com/waverlose/opensim-mcp"
+Issues = "https://github.com/waverlose/opensim-mcp/issues"
+"OpenSim" = "https://opensim.stanford.edu/"
+
+[project.scripts]
+opensim-mcp = "opensim_mcp_server:main"
+opensim-runner = "opensim_runner:main"
+
+# The modules live flat in src/. `sources` remaps that directory so the wheel
+# carries them at top level (opensim_runner.py, ...) rather than a package
+# misleadingly named "src".
+[tool.hatch.build.targets.wheel]
+only-include = ["src"]
+sources = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

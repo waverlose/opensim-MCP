@@ -1,0 +1,29 @@
+{
+  "description": "OpenSim Moco inverse solve through the persistent Python session. Run with: python scripts/run_spec.py template/moco-inverse.json",
+  "note": "Moco goes through run_python (op: run_python) because a study object has to persist across calls. Requires an IK motion in radians and a ground-reaction file. The state carries over between successive run_python ops, so study/problem/solution stay live for inspection.",
+  "ops": [
+    { "op": "get_installation_info", "args": {} },
+    {
+      "op": "download_model",
+      "args": { "model_name": "rajagopal2016" }
+    },
+    {
+      "op": "run_python",
+      "args": {
+        "source": "import opensim as osim\nosim.Logger.setLevelString('Error')\nmodel = osim.Model(str(resolve_model('rajagopal2016')))\nmodel.initSystem()\nprint('model ok:', model.getName(), model.getNumCoordinates(), 'coordinates')"
+      }
+    },
+    {
+      "op": "run_python",
+      "args": {
+        "source": "# Build the MocoInverse problem. Adjust the two paths below.\nik_path = 'ik.mot'\ngrf_path = 'grf.xml'\n\nkinematics = osim.TableProcessor(ik_path)\nkinematics.append(osim.TabOpConvertDegreesToRadians())\n\ninverse = osim.MocoInverse()\ninverse.setModel(model)\ninverse.setKinematics(kinematics)\ninverse.set_initial_time(0.0)\ninverse.set_final_time(1.0)\ninverse.set_mesh_interval(0.02)\ninverse.set_convergence_tolerance(1e-2)\ninverse.set_external_loads(osim.ExternalLoads(grf_path, True))\nprint('study configured')"
+      }
+    },
+    {
+      "op": "run_python",
+      "args": {
+        "source": "solution = inverse.solve()\nsol = solution.getMocoSolution()\nsol.write('moco_inverse_solution.sto')\nprint('success:', sol.success())\nprint('objective:', sol.getObjective())"
+      }
+    }
+  ]
+}

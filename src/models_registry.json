@@ -1,0 +1,42 @@
+{
+  "_comment": "Curated OpenSim models from opensim-org/opensim-models (branch: master). Only .osim files are fetched: headless simulation (IK/ID/SO/Moco) does not need the .vtp mesh geometry, and the full repo is ~298 MB. Add your own entries freely; `filename` is what lands in src/models/.",
+  "_source": "https://github.com/opensim-org/opensim-models",
+  "_branch": "master",
+  "models": {
+    "arm26": {
+      "filename": "arm26.osim",
+      "url": "https://raw.githubusercontent.com/opensim-org/opensim-models/master/Models/Arm26/arm26.osim",
+      "description": "2-DOF, 6-muscle planar arm. The canonical minimal test model."
+    },
+    "gait10dof18musc": {
+      "filename": "gait10dof18musc.osim",
+      "url": "https://raw.githubusercontent.com/opensim-org/opensim-models/master/Models/Gait10dof18musc/gait10dof18musc.osim",
+      "description": "10-DOF, 18-muscle lower-body gait model. Best small model for a full IK->ID->SO pipeline."
+    },
+    "gait2354": {
+      "filename": "gait2354_simbody.osim",
+      "url": "https://raw.githubusercontent.com/opensim-org/opensim-models/master/Models/Gait2354_Simbody/gait2354_simbody.osim",
+      "description": "23-DOF, 54-muscle gait model (Simbody). Classic inverse-dynamics workhorse."
+    },
+    "gait2392": {
+      "filename": "gait2392_thelen2003muscle.osim",
+      "url": "https://raw.githubusercontent.com/opensim-org/opensim-models/master/Models/Gait2392_Simbody/gait2392_thelen2003muscle.osim",
+      "description": "23-DOF, 92-muscle gait model with Thelen2003 muscles. The most widely used OpenSim model."
+    },
+    "gait2392_millard": {
+      "filename": "gait2392_millard2012muscle.osim",
+      "url": "https://raw.githubusercontent.com/opensim-org/opensim-models/master/Models/Gait2392_Simbody/gait2392_millard2012muscle.osim",
+      "description": "As gait2392 but with Millard2012 equilibrium muscles."
+    },
+    "rajagopal2016": {
+      "filename": "Rajagopal2016.osim",
+      "url": "https://raw.githubusercontent.com/opensim-org/opensim-models/master/Models/Rajagopal/Rajagopal2016.osim",
+      "description": "37-DOF, 80-muscle full-body model. Recommended for OpenSim Moco / predictive simulation."
+    },
+    "wrist": {
+      "filename": "wrist.osim",
+      "url": "https://raw.githubusercontent.com/opensim-org/opensim-models/master/Models/WristModel/wrist.osim",
+      "description": "Wrist model, useful for upper-limb and hand studies."
+    }
+  }
+}
